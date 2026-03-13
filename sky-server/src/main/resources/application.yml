@@ -21,7 +21,6 @@ mybatis:
     #开启驼峰命名
     map-underscore-to-camel-case: true
 
-
 logging:
   level:
     com:
@@ -45,3 +44,7 @@ sky:
     port: 3306
     database: sky_take_out
     username: root
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
