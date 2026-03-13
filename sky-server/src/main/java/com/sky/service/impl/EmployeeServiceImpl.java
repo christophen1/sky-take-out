@@ -1,6 +1,10 @@
 package com.sky.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
@@ -8,13 +12,14 @@ import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
-import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +70,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper,Employee> im
         return employee;
     }
 
+    /**
+     * 新增员工
+     * @param employeeDTO
+     */
     @Override
     public void addEmployee(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
@@ -81,6 +90,50 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper,Employee> im
         employee.setCreateUser(BaseContext.getCurrentId());
         employee.setUpdateUser(BaseContext.getCurrentId());
         save(employee);
+    }
+
+    /**
+     * 员工信息分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        //1.分页条件
+        Page<Employee> page = Page.of(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //2.排序条件
+        page.addOrder(new OrderItem(employeePageQueryDTO.getSortBy(), employeePageQueryDTO.getIsAsc()));
+        //3.lambda匹配，名字模糊查询
+        Page<Employee> p = lambdaQuery().like(StringUtils.isNotBlank(employeePageQueryDTO.getName()), Employee::getName, employeePageQueryDTO.getName()).page(page);
+        //4.返回结果
+        return new PageResult<>(p.getTotal(),p.getRecords());
+    }
+
+    /**
+     * @description: 启用或禁用员工
+     * @param:  * @param status 参考{@link Integer}
+     * @param id 参考{@link Long}
+     * @return: void
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        updateById(Employee.builder().status(status).id(id).build());
+    }
+    /**
+     * @description: 更新员工信息
+     * @param:  * @param employeeDTO 参考{@link EmployeeDTO}
+     * @return: void
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        //对象属性拷贝
+        BeanUtils.copyProperties(employeeDTO,employee);
+        //更新
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        updateById(employee);
+
     }
 
 

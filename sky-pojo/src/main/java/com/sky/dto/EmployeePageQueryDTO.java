@@ -1,19 +1,17 @@
 package com.sky.dto;
 
+import com.sky.query.PageQuery;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 @Data
-public class EmployeePageQueryDTO implements Serializable {
+@ToString(callSuper = true)  // 包含父类的 toString
+public class EmployeePageQueryDTO extends PageQuery implements Serializable {
 
     //员工姓名
     private String name;
 
-    //页码
-    private int page;
-
-    //每页显示记录数
-    private int pageSize;
 
 }
