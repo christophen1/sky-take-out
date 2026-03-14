@@ -84,12 +84,12 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper,Employee> im
         employee.setStatus(StatusConstant.ENABLE);
         //设置密码，默认123456
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        //设置创建和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        //设置创建人，修改人
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        //设置创建和修改时间
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        //设置创建人，修改人
+//        employee.setCreateUser(BaseContext.getCurrentId());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
         save(employee);
     }
 
@@ -131,8 +131,8 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper,Employee> im
         //对象属性拷贝
         BeanUtils.copyProperties(employeeDTO,employee);
         //更新
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
         updateById(employee);
 
     }
@@ -150,6 +150,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper,Employee> im
         }
         employee.setPassword(DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes()));
         updateById(employee);
+        
     }
 
 

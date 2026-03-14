@@ -1,18 +1,14 @@
 package com.sky.dto;
 
+import com.sky.query.PageQuery;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class DishPageQueryDTO implements Serializable {
-
-    private int page;
-
-    private int pageSize;
+public class DishPageQueryDTO extends PageQuery implements Serializable  {
 
     private String name;
-
     //分类id
     private Integer categoryId;
 

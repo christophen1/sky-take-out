@@ -37,10 +37,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 .id(categoryDTO.getId())
                 .build();
         category.setStatus(StatusConstant.ENABLE);
-        category.setCreateTime(LocalDateTime.now());
-        category.setUpdateTime(LocalDateTime.now());
-        category.setCreateUser(BaseContext.getCurrentId());
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setCreateTime(LocalDateTime.now());
+//        category.setUpdateTime(LocalDateTime.now());
+//        category.setCreateUser(BaseContext.getCurrentId());
+//        category.setUpdateUser(BaseContext.getCurrentId());
         save(category);
     }
 
@@ -57,8 +57,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 .sort(categoryDTO.getSort())
                 .id(categoryDTO.getId())
                 .build();
-        category.setUpdateTime(LocalDateTime.now());
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setUpdateTime(LocalDateTime.now());
+//        category.setUpdateUser(BaseContext.getCurrentId());
         updateById(category);
     }
 
