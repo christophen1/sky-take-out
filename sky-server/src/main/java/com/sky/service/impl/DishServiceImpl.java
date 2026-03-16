@@ -49,7 +49,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dish.setStatus(StatusConstant.ENABLE);
         }
         save(dish);
-
+        //save自动包装dish对象
         Long dishId = dish.getId();;
         List<DishFlavor> flavors = dishDTO.getFlavors();
         if (flavors != null && !flavors.isEmpty()){
