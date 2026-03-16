@@ -9,8 +9,12 @@ import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface DishMapper extends BaseMapper<Dish> {
 
     Page<DishVO> pageQuery(IPage<DishVO> page,@Param("query") DishPageQueryDTO dishPageQueryDTO);
+
+    List<Dish> getBySetmealId(@Param("setmealId") Long setmealId);
 }

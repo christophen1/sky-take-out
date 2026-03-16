@@ -18,5 +18,8 @@
         </where>
         order by create_time desc
     </select>
+    <select id="getBySetmealId" resultType="com.sky.entity.Dish" parameterType="java.lang.Long">
+        select * from dish where setmeal_id = #{setmealId}
+    </select>
 
 </mapper>
