@@ -66,6 +66,13 @@ public class DishController {
         DishVO dishVO = dishService.getByIdWithFlavor(id);
         return Result.success(dishVO);
     }
+
+
+    /**
+     * 根据分类id查询菜品
+     * @param CategoryId
+     * @return
+     */
     @GetMapping("/list")
     public Result<List<Dish>> list(Long CategoryId){
         log.info("查询菜品：{}",CategoryId);

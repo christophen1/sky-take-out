@@ -58,4 +58,11 @@ public interface DishService extends IService<Dish> {
      * @return: void
      */
     void updateWithFlavors(DishDTO dishDTO);
+
+    /**
+     * @description: 根据分类id查询菜品,返回加上口味
+     * @param:  * @param categoryId
+     * @return: java.util.List<com.sky.vo.DishVO>
+     */
+    List<DishVO> listByCategoryIdToVO(Long categoryId);
 }

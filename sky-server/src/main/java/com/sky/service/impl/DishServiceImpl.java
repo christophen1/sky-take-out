@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,6 +40,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     private DishMapper dishMapper;
     @Autowired
     private SetmealDishService setmealDishService;
+    @Autowired
+    private DishService dishService;
 
 
     @Override
@@ -156,4 +160,45 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishFlavorService.saveBatch(flavors);
         }
     }
+
+    /**
+     * @description: 根据分类id查询菜品
+     * @param:  * @param categoryId
+     * @return: java.util.List<com.sky.vo.DishVO>
+     */
+    @Override
+    public List<DishVO> listByCategoryIdToVO(Long categoryId) {
+        List<Dish> dishList = dishService.lambdaQuery()
+                .eq(categoryId != null,Dish::getCategoryId, categoryId)
+                .eq(Dish::getStatus, StatusConstant.ENABLE)
+                .orderByDesc(Dish::getUpdateTime)
+                .list();
+        if (dishList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Long> ids = dishList.stream()
+                .map(Dish::getId)
+                .collect(Collectors.toList());
+
+        List<DishFlavor> flavorList = dishFlavorService.lambdaQuery()
+                .in(DishFlavor::getDishId,ids).list();
+
+// 按 dishId 分组
+        Map<Long, List<DishFlavor>> map =
+                flavorList.stream().collect(Collectors.groupingBy(DishFlavor::getDishId));
+
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish dish : dishList) {
+            DishVO vo = new DishVO();
+            BeanUtils.copyProperties(dish, vo);
+
+            vo.setFlavors(map.getOrDefault(dish.getId(), new ArrayList<>()));
+
+            dishVOList.add(vo);
+        }
+        return dishVOList;
+    }
+
 }

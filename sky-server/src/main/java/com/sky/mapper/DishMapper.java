@@ -17,4 +17,6 @@ public interface DishMapper extends BaseMapper<Dish> {
     Page<DishVO> pageQuery(IPage<DishVO> page,@Param("query") DishPageQueryDTO dishPageQueryDTO);
 
     List<Dish> getBySetmealId(@Param("setmealId") Long setmealId);
+
+
 }
