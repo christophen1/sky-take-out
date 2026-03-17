@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
      */
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "setmealCache", key = "#dto.categoryId")
     public void saveWithDish(SetmealDTO dto) {
 
         Setmeal setmeal = new Setmeal();
@@ -91,6 +94,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
      */
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public void deleteBatch(List<Long> ids) {
 
         for(Long id : ids){
@@ -138,6 +142,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
      */
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public void update(SetmealDTO dto) {
 
         Setmeal setmeal = new Setmeal();
@@ -165,6 +170,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
      * 起售停售
      */
     @Override
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public void startOrStop(Integer status, Long id) {
 
         if(status == StatusConstant.ENABLE){
@@ -190,10 +196,11 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
     private SetmealMapper setmealMapper;
 
     /**
-     * 条件查询
+     * 根据分类id查套餐
      * @param setmeal
      * @return
      */
+    @Cacheable(cacheNames = "setmealCache",key = "#setmeal.categoryId")
     public List<Setmeal> list(Setmeal setmeal) {
         List<Setmeal> list = setmealMapper.list(setmeal);
         return list;

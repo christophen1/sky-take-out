@@ -18,17 +18,22 @@ import com.sky.service.DishFlavorService;
 import com.sky.service.DishService;
 import com.sky.service.SetmealDishService;
 import com.sky.service.SetmealService;
+import com.sky.utils.RedisUtils;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +51,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Override
     @Transactional
+    @CacheEvict(value = "dishCache",key = "#dishDTO.categoryId")
     public void saveWithFlavors(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO,dish);
@@ -83,6 +89,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      */
     @Override
     @Transactional
+    @CacheEvict(value = "dishCache",allEntries = true)
     public void delete(List<Long> ids) {
         //业务规则：
         //可以一次删除一个菜品，也可以批量删除菜品
@@ -137,6 +144,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * @return: void
      */
     @Override
+    @CacheEvict(value = "dishCache", allEntries = true)
     public void startOrStop(Integer status, Long id) {
         lambdaUpdate().eq(Dish::getId,id).set(Dish::getStatus,status).update();
 
@@ -148,6 +156,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * @return: void
      */
     @Override
+    @CacheEvict(value = "dishCache",allEntries = true)
     public void updateWithFlavors(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO,dish);
@@ -161,13 +170,22 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }
     }
 
+    @Autowired
+    private RedisUtils redisUtils;
+
     /**
      * @description: 根据分类id查询菜品
      * @param:  * @param categoryId
      * @return: java.util.List<com.sky.vo.DishVO>
      */
     @Override
+    @Cacheable(cacheNames = "dishCache",key = "#categoryId")
     public List<DishVO> listByCategoryIdToVO(Long categoryId) {
+//        String key = "dish:" + categoryId;
+//        if(redisUtils.hasKey(key)){
+//            redisUtils.expire(key,3L, TimeUnit.MINUTES);
+//            return redisUtils.get(key,List.class);
+//        }
         List<Dish> dishList = dishService.lambdaQuery()
                 .eq(categoryId != null,Dish::getCategoryId, categoryId)
                 .eq(Dish::getStatus, StatusConstant.ENABLE)
@@ -198,6 +216,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
             dishVOList.add(vo);
         }
+//        redisUtils.set(key,dishVOList,3L,TimeUnit.MINUTES);
         return dishVOList;
     }
 

@@ -13,6 +13,7 @@ import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
+import com.sky.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
+
     /**
      * @description: 新增分类
      * @param:  * @param categoryDTO 参考{@link CategoryDTO}
@@ -106,6 +108,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      */
     @Override
     public List<Category> listByType(Integer type) {
+
         List<Category> list = lambdaQuery().eq(type != null,Category::getType,type).list();
         return list;
     }
