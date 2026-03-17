@@ -1,0 +1,21 @@
+sky:
+  wechat:
+    appid:
+    secret:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: sky_take_out
+    username: root
+    password:
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+  aliyun:
+    oss:
+      endpoint: oss-cn-beijing.aliyuncs.com
+      bucket-name: my-sky-oss001
+      region: cn-beijing
